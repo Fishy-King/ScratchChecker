@@ -6,7 +6,7 @@ button {
 }
 body{
     background-color: blueviolet;
-    color: #FFFF00;
+    color: #F1A800;
 }
 input {
     border: 2px solid #000000; /* Change the color, width, and style */
@@ -28,7 +28,7 @@ input {
     padding: 10px; /* Optional */
   }
   hr {
-    border: 2px solid #FFFF00;
+    border: 2px solid #F1A800;
     border-style: double;
   }
   .center {
@@ -41,15 +41,21 @@ input {
   b {
     font-size: 25px;
     font-family: monospace;
-    color: #FFFF00;
+    color: #F1A800;
   }
   h1 {
 font-family: monospace;
 font-size: 35px;
-color: #FFFF00;
+color: #F1A800;
   }
   body, html {
     margin: 0;
     padding: 0;
     height: 100%; /* Ensure full page height */
+}
+.square {
+  background-color: #F1A800;
+  color: #8a2be2 !important;
+  font-size: 25px;
+  z-index: -1;
 }

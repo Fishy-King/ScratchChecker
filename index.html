@@ -19,6 +19,11 @@
     </div>
 
     <script>
+// Adding a delay function to pause between requests
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function fetchScratchStats() {
     const username = document.getElementById('username').value.trim().toLowerCase();
     if (!username) {
@@ -27,37 +32,48 @@ async function fetchScratchStats() {
     }
 
     try {
+        // Add a delay before making the request (adjust this value as needed)
+        await delay(10000);  // 10 second delay between requests
+
         // Using 'cors-anywhere' proxy for CORS bypass
         const url = `https://api.scratch.mit.edu/users/${username}`;
         const proxyUrl = `https://cors-anywhere.herokuapp.com/${url}`;  // Proxy URL
 
-        // Fetch the user data via proxy
         const response = await fetch(proxyUrl, { cache: "no-store" });
-
-        // Log the raw response to check for HTML errors or unexpected data
-        const rawText = await response.text();
-        console.log("Raw Response: ", rawText);
-
+        
+        // If the response is not ok, check if it's rate limited
         if (!response.ok) {
+            if (response.status === 429) {
+                throw new Error("Rate limit exceeded. Please try again later.");
+            }
             throw new Error(`Failed to fetch data: ${response.status}`);
         }
 
-        // Try to parse the response as JSON
-        const data = JSON.parse(rawText);
-        console.log("Full API Response:", data);
+        // Process response here
+        const data = await response.json();
+        console.log("Full API Response:", data);  // Log the full response data
 
         // Check if the data exists
         if (data.username) {
             // Format the status text (replace newlines with <br> tags)
             const statusText = data.profile?.status ? data.profile.status.replace(/\n/g, '<br>') : "No status set";
+            
+            // Format the bio text (replace newlines with <br> tags)
+            const bioText = data.profile?.bio ? data.profile.bio.replace(/\n/g, '<br>') : "No bio available";
 
+            // Log the profile data to see if followers and bio are included
+            console.log("Profile Data:", data.profile);  // Check if followers and bio exist here
+
+            // Set the profile details with formatted bio and status
             document.getElementById('profile').innerHTML = `
                 <h2>${data.username}</h2>
                 <img src="https://uploads.scratch.mit.edu/get_image/user/${data.id}_90x90.png" alt="Profile Pic">
                 <p><strong>ID:</strong> ${data.id}</p>
-                <p><strong>Status:</strong> <span>${statusText}</span></p>
+                <p><strong>Status:</strong> ${statusText}</p>
                 <p><strong>Country:</strong> ${data.profile?.country || "Not available"}</p>
                 <p><strong>Joined:</strong> ${new Date(data.history?.joined).toDateString() || "Not available"}</p>
+                <p><strong>Followers:</strong> ${data.profile?.followers || "Not available"}</p>
+                <p><strong>Bio:</strong> ${bioText}</p>  <!-- Display bio here -->
             `;
         } else {
             throw new Error("User data not found or invalid response");
