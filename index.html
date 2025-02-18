@@ -37,7 +37,7 @@ async function fetchScratchStats() {
 
         // Using 'cors-anywhere' proxy for CORS bypass
         const url = `https://api.scratch.mit.edu/users/${username}`;
-        const proxyUrl = `https://cors-anywhere.herokuapp.com/${url}`;  // Proxy URL
+        const proxyUrl = `https://script.google.com/macros/s/AKfycbzdmGuCChtHMV9ssOx9-7cQAMVQlj1svlTddGSBXtl1HYMIaWRk1QW5H1Xe9WnMiV0/exec${url}`;  // Proxy URL
 
         const response = await fetch(proxyUrl, { cache: "no-store" });
         
